@@ -1,3 +1,33 @@
+import streamlit as st
+import base64
+
+# If URL includes ?data=..., treat it as a view page
+query_data = st.query_params.get("data")
+
+if query_data:
+    try:
+        decoded = base64.urlsafe_b64decode(query_data.encode()).decode("utf-8")
+        st.set_page_config(page_title="FBO Contact Viewer", layout="centered")
+        st.title("📇 Contact Information")
+        st.markdown(decoded, unsafe_allow_html=True)
+
+        if st.button("📥 Download Contact Card (.vcf)"):
+            name_line = decoded.split("<h3>")[1].split("</h3>")[0]
+            email_line = decoded.split("mailto:")[1].split("'")[0]
+            vcf = f\"\"\"BEGIN:VCARD
+VERSION:3.0
+FN:{name_line}
+EMAIL:{email_line}
+END:VCARD\"\"\"
+            st.download_button(
+                label="Download .vcf file",
+                data=vcf,
+                file_name=f"{name_line.replace(' ', '_')}.vcf",
+                mime="text/vcard"
+            )
+    except:
+        st.error("Invalid or expired QR code.")
+    st.stop()  # Prevent the rest of the QR generator from running
 
 import streamlit as st
 import qrcode
