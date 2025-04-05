@@ -62,7 +62,7 @@ if submit and name and email:
     buf.seek(0)
 
     st.subheader("Here is your QR Code")
-    st.image(buf, caption="Let attendees scan this QR to view your contact info.", use_column_width=True)
+    st.image(buf, caption="Let attendees scan this QR to view your contact info.", use_container_width=False)
 
     b64_img = base64.b64encode(buf.getvalue()).decode()
     href = f'<a href="data:image/png;base64,{b64_img}" download="FBO_QR_{name}.png">📥 Download QR Code</a>'
